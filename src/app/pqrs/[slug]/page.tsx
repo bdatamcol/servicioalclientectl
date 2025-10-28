@@ -17,37 +17,37 @@ const TYPES = [
     value: "Felicitación",
     label: "Felicitación",
     icon: Heart,
-    color: "border-pink-200 hover:border-pink-400 hover:bg-pink-50",
+    color: "border-chart-1 hover:border-chart-1 hover:bg-chart-1/10",
   },
   {
     value: "Sugerencia",
     label: "Sugerencia",
     icon: Lightbulb,
-    color: "border-amber-200 hover:border-amber-400 hover:bg-amber-50",
+    color: "border-chart-2 hover:border-chart-2 hover:bg-chart-2/10",
   },
   {
     value: "Solicitud",
     label: "Solicitud",
     icon: FileText,
-    color: "border-blue-200 hover:border-blue-400 hover:bg-blue-50",
+    color: "border-chart-3 hover:border-chart-3 hover:bg-chart-3/10",
   },
   {
     value: "Petición",
     label: "Petición",
     icon: HelpCircle,
-    color: "border-indigo-200 hover:border-indigo-400 hover:bg-indigo-50",
+    color: "border-chart-4 hover:border-chart-4 hover:bg-chart-4/10",
   },
   {
     value: "Queja",
     label: "Queja",
     icon: AlertCircle,
-    color: "border-orange-200 hover:border-orange-400 hover:bg-orange-50",
+    color: "border-chart-5 hover:border-chart-5 hover:bg-chart-5/10",
   },
   {
     value: "Reclamo",
     label: "Reclamo",
     icon: MessageSquare,
-    color: "border-red-200 hover:border-red-400 hover:bg-red-50",
+    color: "border-destructive hover:border-destructive hover:bg-destructive/10",
   },
 ]
 
@@ -159,7 +159,7 @@ export default function PqrsPublicPage({ params }: { params: Promise<{ slug: str
   }
 
   return (
-    <div className="min-h-svh bg-gradient-to-br from-slate-50 via-white to-slate-50 flex items-center justify-center px-4 py-12">
+    <div className="min-h-svh bg-gradient-to-br from-accent via-background to-accent flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-3xl">
         {loadingBranch ? (
           <div className="text-center">
@@ -184,7 +184,7 @@ export default function PqrsPublicPage({ params }: { params: Promise<{ slug: str
                         alt="Logo"
                         width={300}
                         height={100}
-                        className="w-full h-auto  ring-4 ring-white"
+                        className="w-full h-auto ring-4 ring-background"
                       />
                     </div>
                   )}
@@ -212,7 +212,7 @@ export default function PqrsPublicPage({ params }: { params: Promise<{ slug: str
 
             <form
               onSubmit={handleSubmit}
-              className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 md:p-10 space-y-8"
+              className="bg-card rounded-2xl shadow-xl border border-border p-8 md:p-10 space-y-8"
             >
               <div className="space-y-4">
                 <Label className="text-base font-semibold">Selecciona el tipo de mensaje</Label>
@@ -379,15 +379,15 @@ export default function PqrsPublicPage({ params }: { params: Promise<{ slug: str
               </div>
 
               {submittedId && (
-                <div className="rounded-lg bg-green-50 border border-green-200 p-4 text-center">
-                  <p className="text-green-800 font-medium">¡Mensaje enviado exitosamente!</p>
-                  <p className="text-sm text-green-700 mt-1">ID de seguimiento: {submittedId}</p>
+                <div className="rounded-lg bg-primary/10 border border-primary/20 p-4 text-center">
+                  <p className="text-primary font-medium">¡Mensaje enviado exitosamente!</p>
+                  <p className="text-sm text-primary/80 mt-1">ID de seguimiento: {submittedId}</p>
                 </div>
               )}
 
               {error && (
-                <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-center">
-                  <p className="text-red-800 font-medium">{error}</p>
+                <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-4 text-center">
+                  <p className="text-destructive font-medium">{error}</p>
                 </div>
               )}
             </form>

@@ -106,7 +106,7 @@ export default function DashboardPage() {
                   (stats?.charts?.pqrs_by_day ?? []).map((d, i) => (
                     <div key={d.date} className="flex flex-col items-center gap-2">
                       <div 
-                        className="w-8 bg-blue-600/60 min-h-[4px]" 
+                        className="w-8 bg-chart-1/60 min-h-[4px]" 
                         style={{ height: `${Math.max(4, Math.round((d.count / maxDay) * 120))}px` }} 
                       />
                       <div className="text-xs text-muted-foreground">
@@ -133,7 +133,7 @@ export default function DashboardPage() {
                   (stats?.charts?.pqrs_by_type ?? []).map((t, i) => (
                     <div key={t.type} className="flex flex-col items-center gap-2">
                       <div 
-                        className="w-8 bg-emerald-600/60 min-h-[4px]" 
+                        className="w-8 bg-chart-2/60 min-h-[4px]" 
                         style={{ height: `${Math.max(4, Math.round((t.count / maxType) * 120))}px` }} 
                       />
                       <div className="text-xs text-muted-foreground">{t.type}</div>
@@ -162,7 +162,7 @@ export default function DashboardPage() {
                 <div key={t.type} className="flex items-center gap-3">
                   <div className="w-28 text-sm">{t.type}</div>
                   <div className="flex-1 h-3 rounded bg-muted relative overflow-hidden">
-                    <div className="absolute left-0 top-0 bottom-0 bg-emerald-600/60" style={{ width: `${Math.round((t.count / maxType) * 100)}%` }} />
+                    <div className="absolute left-0 top-0 bottom-0 bg-chart-2/60" style={{ width: `${Math.round((t.count / maxType) * 100)}%` }} />
                   </div>
                   <div className="w-10 text-xs text-right">{t.count}</div>
                 </div>
@@ -180,14 +180,14 @@ export default function DashboardPage() {
               <div className="flex items-center gap-3">
                 <div className="w-36 text-sm">Anónimos</div>
                 <div className="flex-1 h-3 rounded bg-muted relative overflow-hidden">
-                  <div className="absolute left-0 top-0 bottom-0 bg-red-500/70" style={{ width: `${stats?.breakdown?.percent_anonymous ?? 0}%` }} />
+                  <div className="absolute left-0 top-0 bottom-0 bg-destructive/70" style={{ width: `${stats?.breakdown?.percent_anonymous ?? 0}%` }} />
                 </div>
                 <div className="w-14 text-xs text-right">{stats?.breakdown?.percent_anonymous ?? 0}%</div>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-36 text-sm">Completos</div>
                 <div className="flex-1 h-3 rounded bg-muted relative overflow-hidden">
-                  <div className="absolute left-0 top-0 bottom-0 bg-blue-600/70" style={{ width: `${stats?.breakdown?.percent_complete ?? 0}%` }} />
+                  <div className="absolute left-0 top-0 bottom-0 bg-primary/70" style={{ width: `${stats?.breakdown?.percent_complete ?? 0}%` }} />
                 </div>
                 <div className="w-14 text-xs text-right">{stats?.breakdown?.percent_complete ?? 0}%</div>
               </div>

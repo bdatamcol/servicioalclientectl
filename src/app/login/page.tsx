@@ -48,7 +48,7 @@ export default function LoginPage() {
           <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
         {error && (
-          <p className="text-red-600 text-sm" aria-live="polite">{error}</p>
+            <p className="text-destructive text-sm" aria-live="polite">{error}</p>
         )}
         <Button type="submit" disabled={loading} className="w-full">
           {loading ? 'Accediendo…' : 'Acceder'}

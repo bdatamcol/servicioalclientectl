@@ -444,8 +444,8 @@ export default function PqrsDashboardPage() {
                   )}
 
                   {responsesError && (
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                      <div className="text-sm text-red-600">{responsesError}</div>
+                    <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
+                      <div className="text-sm text-destructive">{responsesError}</div>
                     </div>
                   )}
 
@@ -463,9 +463,9 @@ export default function PqrsDashboardPage() {
                               <div key={response.id} className="border rounded-md p-3">
                                 <div className="flex items-center justify-between mb-2">
                                   <div className="flex items-center gap-2">
-                                    {response.status === 'sent' && <CheckCircle className="h-4 w-4 text-green-500" />}
-                                    {response.status === 'failed' && <XCircle className="h-4 w-4 text-red-500" />}
-                                    {response.status === 'pending' && <Clock className="h-4 w-4 text-yellow-500" />}
+                                    {response.status === 'sent' && <CheckCircle className="h-4 w-4 text-primary" />}
+                                    {response.status === 'failed' && <XCircle className="h-4 w-4 text-destructive" />}
+                                    {response.status === 'pending' && <Clock className="h-4 w-4 text-ring" />}
                                     <span className="text-sm font-medium">
                                       {response.responder_name || response.responder_email}
                                     </span>
@@ -478,7 +478,7 @@ export default function PqrsDashboardPage() {
                                   {response.content || 'Sin contenido'}
                                 </div>
                                 {(response.error_message) && (
-                                  <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-600">
+                                  <div className="mt-2 p-2 bg-destructive/10 border border-destructive/20 rounded text-xs text-destructive">
                                     <strong>Error:</strong> {response.error_message}
                                   </div>
                                 )}
@@ -637,16 +637,16 @@ export default function PqrsDashboardPage() {
                 </Button>
               </div>
               {sendError && (
-                <div className="bg-red-50 border border-red-200 rounded-md p-3" role="alert">
+                <div className="bg-destructive/10 border border-destructive/20 rounded-md p-3" role="alert">
                   <div className="flex">
                     <div className="flex-shrink-0">
-                      <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                      <svg className="h-5 w-5 text-destructive" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                       </svg>
                     </div>
                     <div className="ml-3">
-                      <h3 className="text-sm font-medium text-red-800">Error al enviar correo</h3>
-                      <div className="mt-2 text-sm text-red-700">
+                      <h3 className="text-sm font-medium text-destructive">Error al enviar correo</h3>
+                      <div className="mt-2 text-sm text-destructive">
                         <p>{sendError}</p>
                       </div>
                     </div>
@@ -672,7 +672,7 @@ export default function PqrsDashboardPage() {
         </DialogContent>
       </Dialog>
 
-      {error && <p className="text-red-600 text-sm" aria-live="polite">{error}</p>}
+      {error && <p className="text-destructive text-sm" aria-live="polite">{error}</p>}
     </div>
   )
 }

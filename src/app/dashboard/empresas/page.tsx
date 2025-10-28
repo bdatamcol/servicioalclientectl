@@ -218,7 +218,7 @@ export default function EmpresasPage() {
               <Label htmlFor="logo">Logo (archivo local)</Label>
               <Input id="logo" type="file" accept="image/*" onChange={handleLogoFileChange} />
               {uploadingLogo && <p className="text-xs text-muted-foreground">Subiendo…</p>}
-              {formLogoUrl && <p className="text-xs text-muted-foreground">Guardado: {formLogoUrl}</p>}
+              {formLogoUrl && <p className="text-xs text-muted-foreground break-all">Guardado: {formLogoUrl}</p>}
             </div>
             <div className="flex items-center gap-2">
               <Checkbox id="active" checked={formActive} onCheckedChange={(v) => setFormActive(!!v)} />
@@ -245,7 +245,7 @@ export default function EmpresasPage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {error && <p className="text-red-600 text-sm" aria-live="polite">{error}</p>}
+      {error && <p className="text-destructive text-sm" aria-live="polite">{error}</p>}
     </div>
   )
 }
