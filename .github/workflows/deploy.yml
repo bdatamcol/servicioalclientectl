@@ -1,0 +1,24 @@
+name: deploy
+on:
+  workflow_run:
+    workflows: ["build"]
+    types: [completed]
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull & Recreate (VPS)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -e
+            cd /srv/stacks/servicioalclientectl
+            docker compose pull
+            docker compose up -d
+            docker image prune -f
