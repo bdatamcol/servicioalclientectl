@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -13,7 +16,8 @@ export async function GET(req: NextRequest) {
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
-  let query = supabaseAdmin
+  const supabase = getSupabaseAdmin();
+  let query = supabase
     .from("branches")
     .select("*, company:companies(id,name,logo_url)", { count: "exact" })
     .order("created_at", { ascending: false })
@@ -55,7 +59,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "Debe seleccionar la empresa" }, { status: 400 });
   }
   const slugFinal = slug && typeof slug === "string" && slug.trim() ? slug.trim() : generateSlug(name);
-  const { data, error } = await supabaseAdmin
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
     .from("branches")
     .insert({ name, address, is_active, company_id, logo_url, slug: slugFinal })
     .select("*, company:companies(id,name,logo_url)")

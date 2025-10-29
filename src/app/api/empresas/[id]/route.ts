@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
@@ -13,7 +16,8 @@ export async function PUT(req: NextRequest, context: { params: Promise<{ id: str
   if (is_active !== undefined) update.is_active = !!is_active;
   if (logo_url !== undefined) update.logo_url = logo_url;
 
-  const { data, error } = await supabaseAdmin
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
     .from("companies")
     .update(update)
     .eq("id", id)
@@ -31,7 +35,7 @@ export async function DELETE(_req: NextRequest, context: { params: Promise<{ id:
   if (!id) return NextResponse.json({ ok: false, error: "ID requerido" }, { status: 400 });
 
   // Listar sucursales de la empresa
-  const { data: branches, error: branchesListError } = await supabaseAdmin
+  const { data: branches, error: branchesListError } = await getSupabaseAdmin()
     .from("branches")
     .select("id")
     .eq("company_id", id);
@@ -42,7 +46,7 @@ export async function DELETE(_req: NextRequest, context: { params: Promise<{ id:
 
   // Desvincular PQRS de estas sucursales
   if (branchIds.length > 0) {
-    const { error: pqrsBranchUpdateError } = await supabaseAdmin
+    const { error: pqrsBranchUpdateError } = await getSupabaseAdmin()
       .from("pqrs")
       .update({ branch_id: null })
       .in("branch_id", branchIds);
@@ -52,7 +56,7 @@ export async function DELETE(_req: NextRequest, context: { params: Promise<{ id:
   }
 
   // Desvincular PQRS de la empresa
-  const { error: pqrsCompanyUpdateError } = await supabaseAdmin
+  const { error: pqrsCompanyUpdateError } = await getSupabaseAdmin()
     .from("pqrs")
     .update({ company_id: null })
     .eq("company_id", id);
@@ -62,7 +66,7 @@ export async function DELETE(_req: NextRequest, context: { params: Promise<{ id:
 
   // Eliminar sucursales de la empresa
   if (branchIds.length > 0) {
-    const { error: branchesDeleteError } = await supabaseAdmin
+    const { error: branchesDeleteError } = await getSupabaseAdmin()
       .from("branches")
       .delete()
       .in("id", branchIds);
@@ -72,7 +76,7 @@ export async function DELETE(_req: NextRequest, context: { params: Promise<{ id:
   }
 
   // Eliminar la empresa
-  const { error } = await supabaseAdmin.from("companies").delete().eq("id", id);
+  const { error } = await getSupabaseAdmin().from("companies").delete().eq("id", id);
   if (error) {
     return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
   }

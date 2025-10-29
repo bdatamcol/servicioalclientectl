@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { supabaseAdmin } from "@/lib/supabase/admin"
+import { getSupabaseAdmin } from "@/lib/supabase/admin" 
 
 const TYPE_FROM_ABBR: Record<string, string> = {
   FE: "Felicitación",
@@ -57,7 +57,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ cod
     return NextResponse.json({ ok: false, error: "Prefijo de código desconocido" }, { status: 400 })
   }
 
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await getSupabaseAdmin()
     .from("pqrs")
     .select("id, created_at, type, first_name, last_name, email, phone, message, company_id, branch_id, company:companies(name), branch:branches(name)")
     .eq("type", type)

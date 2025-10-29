@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -12,7 +14,11 @@ export async function GET(req: NextRequest) {
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
-  let query = supabaseAdmin.from("companies").select("*", { count: "exact" }).order("created_at", { ascending: false }).range(from, to);
+  const supabase = getSupabaseAdmin();
+  let query = supabase.from("companies")
+    .select("*", { count: "exact" })
+    .order("created_at", { ascending: false })
+    .range(from, to);
 
   if (search) {
     query = query.ilike("name", `%${search}%`);
@@ -34,7 +40,8 @@ export async function POST(req: NextRequest) {
   if (!name || typeof name !== "string") {
     return NextResponse.json({ ok: false, error: "El nombre es obligatorio" }, { status: 400 });
   }
-  const { data, error } = await supabaseAdmin
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
     .from("companies")
     .insert({ name, address, is_active, logo_url })
     .select()

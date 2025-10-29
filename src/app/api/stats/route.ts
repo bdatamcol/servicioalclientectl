@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
 // Tipos para PQRS en consultas específicas
 type RecentPqrsRow = {
@@ -27,17 +27,17 @@ type RangePqrsRow = {
 export async function GET(_req: NextRequest) {
   try {
     // Obtener conteos básicos de las tablas que existen
-    const { count: companiesCount, error: companiesError } = await supabaseAdmin
+    const { count: companiesCount, error: companiesError } = await getSupabaseAdmin()
       .from("companies")
       .select("id", { count: "exact", head: true })
     if (companiesError) throw companiesError
 
-    const { count: branchesCount, error: branchesError } = await supabaseAdmin
+    const { count: branchesCount, error: branchesError } = await getSupabaseAdmin()
       .from("branches")
       .select("id", { count: "exact", head: true })
     if (branchesError) throw branchesError
 
-    const { count: pqrsCount, error: pqrsError } = await supabaseAdmin
+    const { count: pqrsCount, error: pqrsError } = await getSupabaseAdmin()
       .from("pqrs")
       .select("id", { count: "exact", head: true })
     if (pqrsError) throw pqrsError
@@ -47,14 +47,14 @@ export async function GET(_req: NextRequest) {
     todayStart.setHours(0, 0, 0, 0)
     const todayIso = todayStart.toISOString()
 
-    const { count: pqrsTodayCount, error: pqrsTodayError } = await supabaseAdmin
+    const { count: pqrsTodayCount, error: pqrsTodayError } = await getSupabaseAdmin()
       .from("pqrs")
       .select("id", { count: "exact", head: true })
       .gte("created_at", todayIso)
     if (pqrsTodayError) throw pqrsTodayError
 
     // PQRS recientes
-    const { data: recentPqrs, error: recentError } = await supabaseAdmin
+    const { data: recentPqrs, error: recentError } = await getSupabaseAdmin()
       .from("pqrs")
       .select("id, created_at, type, first_name, last_name, email, message, company:companies(name), branch:branches(name)")
       .order("created_at", { ascending: false })
@@ -85,11 +85,11 @@ export async function GET(_req: NextRequest) {
     start.setDate(start.getDate() - (days - 1))
     const startIso = start.toISOString()
 
-    const { data: rangePqrs, error: rangeError } = await supabaseAdmin
+    const { data: rangePqrs, error: rangeError } = await getSupabaseAdmin()
       .from("pqrs")
       .select("id, created_at, type, first_name, last_name, national_id, phone")
       .gte("created_at", startIso)
-      .order("created_at", { ascending: true })
+      .order("created_at", { ascending: true });
     if (rangeError) throw rangeError
 
     const byDayMap: Record<string, number> = {}
@@ -115,14 +115,14 @@ export async function GET(_req: NextRequest) {
     const pqrs_by_type = Object.entries(byTypeMap).map(([type, count]) => ({ type, count }))
 
     // Desglose: anónimos vs completos
-    const { count: anonymousCount, error: anonError } = await supabaseAdmin
+    const { count: anonymousCount, error: anonError } = await getSupabaseAdmin()
       .from("pqrs")
       .select("id", { count: "exact", head: true })
       .eq("first_name", "Anónimo")
       .eq("last_name", "Anónimo")
     if (anonError) throw anonError
 
-    const { count: completeCount, error: completeError } = await supabaseAdmin
+    const { count: completeCount, error: completeError } = await getSupabaseAdmin()
       .from("pqrs")
       .select("id", { count: "exact", head: true })
       .neq("first_name", "Anónimo")

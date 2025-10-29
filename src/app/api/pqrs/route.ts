@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
 const TYPES = ["Queja","Reclamo","Solicitud","Felicitación","Petición","Sugerencia"] as const;
 
@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
-  let query = supabaseAdmin
+  let query = getSupabaseAdmin()
     .from("pqrs")
     .select("*, branch:branches(id,name,slug,logo_url), company:companies(id,name,logo_url)", { count: "exact" })
     .order("created_at", { ascending: false })
@@ -73,6 +73,8 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ ok: true, data: dataWithCode, count });
 }
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const {
@@ -125,7 +127,8 @@ export async function POST(req: NextRequest) {
     national_id,
   };
 
-  const { data, error } = await supabaseAdmin
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
     .from("pqrs")
     .insert(insert)
     .select("*, branch:branches(id,name,slug,logo_url), company:companies(id,name,logo_url)")

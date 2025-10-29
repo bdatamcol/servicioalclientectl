@@ -35,6 +35,18 @@ export default function RootLayout({
         className={`${ubuntu.variable} ${sourceSerif.variable} ${jetBrainsMono.variable} antialiased`}
         suppressHydrationWarning={true}
       >
+        {/* Inyección de variables públicas en runtime para el cliente */}
+        <script
+          id="public-env"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.__PUBLIC_ENV__ = {
+                NEXT_PUBLIC_SUPABASE_URL: ${JSON.stringify(process.env.NEXT_PUBLIC_SUPABASE_URL || '')},
+                NEXT_PUBLIC_SUPABASE_ANON_KEY: ${JSON.stringify(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '')}
+              };
+            `,
+          }}
+        />
         {children}
       </body>
     </html>

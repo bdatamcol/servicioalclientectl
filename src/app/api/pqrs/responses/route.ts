@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import nodemailer from 'nodemailer';
 
 export const runtime = "nodejs";
@@ -28,6 +28,9 @@ interface ResponsePostBody {
   attachment?: File;
 }
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET(req: NextRequest) {
   try {
     console.log("Iniciando GET /api/pqrs/responses");
@@ -40,7 +43,7 @@ export async function GET(req: NextRequest) {
     
     console.log("Parámetros recibidos:", { pqrsIdParam, idsParam, page, pageSize });
 
-    let query = supabaseAdmin
+    let query = getSupabaseAdmin()
       .from("pqrs_responses")
       .select("*")
       .order("created_at", { ascending: false });
@@ -201,8 +204,8 @@ export async function POST(req: NextRequest) {
         status: 'sent'
       };
       
-      const { data: dbData, error: dbError } = await supabaseAdmin
-        .from('pqrs_responses')
+      const { data: dbData, error: dbError } = await getSupabaseAdmin()
+        .from("pqrs_responses")
         .insert(responseData)
         .select()
         .single();
@@ -242,7 +245,7 @@ export async function POST(req: NextRequest) {
         status: 'failed'
       };
       
-      await supabaseAdmin
+      await getSupabaseAdmin()
         .from('pqrs_responses')
         .insert(errorData);
       

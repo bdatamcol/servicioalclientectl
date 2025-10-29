@@ -1,5 +1,5 @@
 // Validaciones de seguridad y permisos para el sistema PQRS
-import { supabaseAdmin } from '@/lib/supabase/admin'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 
 export interface UserPermissions {
   canViewResponses: boolean
@@ -112,7 +112,7 @@ export async function canAccessPqrs(pqrsId: string, permissions: UserPermissions
     }
 
     // Obtener información del PQRS
-    const { data: pqrs, error } = await supabaseAdmin
+    const { data: pqrs, error } = await getSupabaseAdmin()
       .from('pqrs')
       .select('company_id, branch_id')
       .eq('id', pqrsId)
@@ -178,7 +178,8 @@ export async function createSecurityContext(request: Request): Promise<SecurityC
     }
 
     // Verificar el token con Supabase
-    const { data: { user }, error } = await supabaseAdmin.auth.getUser(token)
+    const supabase = getSupabaseAdmin();
+    const { data: { user }, error } = await supabase.auth.getUser(token)
     
     if (error || !user) {
       throw new Error('Token inválido')
@@ -229,7 +230,7 @@ export async function logSecurityEvent(
   details?: unknown
 ) {
   try {
-    await supabaseAdmin
+    await getSupabaseAdmin()
       .from('security_audit_log')
       .insert({
         user_id: context.userId,
@@ -262,7 +263,7 @@ export async function checkRateLimit(
   try {
     const windowStart = new Date(Date.now() - windowMinutes * 60 * 1000).toISOString()
     
-    const { count, error } = await supabaseAdmin
+    const { count, error } = await getSupabaseAdmin()
       .from('security_audit_log')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)

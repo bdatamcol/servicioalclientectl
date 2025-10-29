@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET(_req: NextRequest, context: { params: Promise<{ slug: string }> }) {
   const { slug } = await context.params;
   if (!slug) return NextResponse.json({ ok: false, error: "Slug requerido" }, { status: 400 });
 
-  const { data, error } = await supabaseAdmin
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
     .from("branches")
     .select("id,name,slug,address,logo_url,is_active,company_id, company:companies(id,name,logo_url)")
     .eq("slug", slug)

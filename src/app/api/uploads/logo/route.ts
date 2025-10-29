@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function POST(req: NextRequest) {
   try {
@@ -33,7 +35,8 @@ export async function POST(req: NextRequest) {
     const filePath = `logos/${filename}`;
 
     // Subir archivo a Supabase Storage
-    const { data, error } = await supabaseAdmin.storage
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase.storage
       .from('uploads')
       .upload(filePath, buffer, {
         contentType: file.type,
@@ -46,7 +49,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Obtener URL pública del archivo
-    const { data: publicUrlData } = supabaseAdmin.storage
+    const { data: publicUrlData } = await supabase.storage
       .from('uploads')
       .getPublicUrl(filePath);
 

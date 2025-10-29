@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
 export async function GET() {
   const email = "admin@backcenter.com";
   const password = "1q2w3e4r";
 
-  const { data, error } = await supabaseAdmin.auth.admin.createUser({
+  const { data, error } = await getSupabaseAdmin().auth.admin.createUser({
     email,
     password,
     email_confirm: true,

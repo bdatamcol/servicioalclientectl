@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase/client'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { 
   getUserPermissions, 
   canViewResponses, 
@@ -191,7 +191,7 @@ export async function GET(request: NextRequest) {
     const offset = (page - 1) * limit
 
     // Construir query optimizada usando la tabla directamente
-    let query = supabase
+    let query = getSupabaseAdmin()
       .from('pqrs_responses')
       .select(`
         id,
@@ -213,7 +213,7 @@ export async function GET(request: NextRequest) {
       // Filtrar por empresas/sucursales permitidas si no es admin
       if (permissions.allowedCompanies.length > 0) {
         // Necesitamos hacer join con la tabla pqrs para filtrar por company_id
-        query = supabase
+        query = getSupabaseAdmin()
           .from('pqrs_responses')
           .select(`
             *,
@@ -246,7 +246,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Obtener total de registros para paginación
-    const countQuery = supabase
+    const countQuery = getSupabaseAdmin()
       .from('pqrs_responses')
       .select('*', { count: 'exact', head: true })
       .eq('pqrs_id', params.pqrs_id)
@@ -291,7 +291,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Obtener estadísticas de resumen
-    const { data: summaryData, error: summaryError } = await supabase
+    const { data: summaryData, error: summaryError } = await getSupabaseAdmin()
       .from('pqrs_responses')
       .select('status')
       .eq('pqrs_id', params.pqrs_id)
@@ -417,3 +417,5 @@ export async function DELETE(request: NextRequest) {
     }, { status: 500 })
   }
 }
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
