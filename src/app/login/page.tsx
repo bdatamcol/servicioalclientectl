@@ -8,8 +8,8 @@ import { Input } from '@/components/ui/input'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [email, setEmail] = useState('admin@backcenter.com')
-  const [password, setPassword] = useState('1q2w3e4r')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
