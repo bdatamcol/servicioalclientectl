@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:22-alpine3.21 AS builder
 WORKDIR /app
 
 ARG NEXT_PUBLIC_SUPABASE_URL
@@ -12,9 +12,12 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM node:20-alpine
+FROM node:22-alpine3.21
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=builder /app ./
+
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
 EXPOSE 3000
-CMD ["npm","start"]
+CMD ["node","server.js"]
