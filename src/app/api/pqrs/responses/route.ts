@@ -196,12 +196,15 @@ export async function POST(req: NextRequest) {
       const info = await transporter.sendMail(mailOptions);
       console.log("Correo enviado exitosamente:", info.messageId);
       
-      // Guardar en la base de datos (usando columnas existentes mínimas)
+      const nowIso = new Date().toISOString();
       const responseData = {
         pqrs_id: body.pqrs_id,
         response_text: body.content,
         response_type: 'email',
-        status: 'sent'
+        status: 'sent',
+        sent_at: nowIso,
+        sent_by: body.responder_email,
+        email_subject: body.subject || null
       };
       
       const { data: dbData, error: dbError } = await getSupabaseAdmin()
@@ -237,12 +240,13 @@ export async function POST(req: NextRequest) {
       console.error("Error enviando correo:", emailError);
       const errorMessage = emailError instanceof Error ? emailError.message : 'Error al enviar el correo';
       
-      // Guardar el error en la base de datos (usando columnas existentes mínimas)
       const errorData = {
         pqrs_id: body.pqrs_id,
         response_text: body.content,
         response_type: 'email',
-        status: 'failed'
+        status: 'failed',
+        sent_by: body.responder_email,
+        email_subject: body.subject || null
       };
       
       await getSupabaseAdmin()

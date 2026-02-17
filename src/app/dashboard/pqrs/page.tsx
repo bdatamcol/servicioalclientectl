@@ -122,33 +122,75 @@ export default function PqrsDashboardPage() {
     
     try {
       const params = new URLSearchParams({
-        pqrs_id: pqrsId,
+        pqrsId: pqrsId,
         page: String(resetPage ? 1 : responsesPage),
-        limit: String(responsesLimit)
+        pageSize: String(responsesLimit)
       })
-      
-      // Agregar filtros si están definidos
-      if (responsesFilters.status && responsesFilters.status !== 'all') params.set('status', responsesFilters.status)
-      if (responsesFilters.responder_email) params.set('responder_email', responsesFilters.responder_email)
-      if (responsesFilters.date_from) params.set('date_from', responsesFilters.date_from)
-      if (responsesFilters.date_to) params.set('date_to', responsesFilters.date_to)
-      if (responsesFilters.search) params.set('search', responsesFilters.search)
-      
-      const response = await fetch(`/api/pqrs/responses/queries?${params.toString()}`)
+
+      const response = await fetch(`/api/pqrs/responses?${params.toString()}`)
       const json = await response.json()
-      
-      if (!response.ok) {
+
+      if (!response.ok || !json.ok) {
         throw new Error(json.error || 'Error al cargar respuestas')
       }
-      
-      setResponses((json.responses || []) as ResponseItem[])
+
+      const rows = (json.data || []) as Array<{
+        id: string
+        pqrs_id: string
+        response_text?: string | null
+        status?: string | null
+        sent_at?: string | null
+        created_at?: string | null
+        sent_by?: string | null
+        attachment_count?: number | null
+        error_message?: string | null
+        retry_count?: number | null
+      }>
+
+      const mapped: ResponseItem[] = rows.map((row) => ({
+        id: row.id,
+        sent_at: row.sent_at || '',
+        content: row.response_text || '',
+        responder_email: row.sent_by || null,
+        responder_name: row.sent_by || null,
+        status: row.status || undefined,
+        error_message: row.error_message || null,
+        subject: undefined,
+        has_attachments: (row.attachment_count ?? 0) > 0,
+        attachment_count: row.attachment_count ?? 0,
+        content_preview: row.response_text ? row.response_text.substring(0, 100) + '...' : '',
+        retry_count: row.retry_count ?? undefined,
+        created_at: row.created_at || row.sent_at || new Date().toISOString()
+      }))
+
+      setResponses(mapped)
+
+      const summary = rows.reduce(
+        (acc, row) => {
+          acc.total_responses += 1
+          switch (row.status) {
+            case 'sent':
+              acc.successful_sends += 1
+              break
+            case 'failed':
+              acc.failed_sends += 1
+              break
+            case 'pending':
+              acc.pending_sends += 1
+              break
+          }
+          return acc
+        },
+        {
+          total_responses: 0,
+          successful_sends: 0,
+          failed_sends: 0,
+          pending_sends: 0
+        }
+      )
+
+      setResponsesSummary(summary)
       setResponsesTotalPages(json.pagination?.totalPages || 1)
-      setResponsesSummary({
-        total_responses: json.summary?.total || 0,
-        successful_sends: json.summary?.sent || 0,
-        failed_sends: json.summary?.failed || 0,
-        pending_sends: json.summary?.pending || 0
-      })
       
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Error al cargar respuestas'
