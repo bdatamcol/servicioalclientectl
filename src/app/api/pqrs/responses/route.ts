@@ -161,6 +161,7 @@ export async function POST(req: NextRequest) {
       // Configurar el correo
       const mailOptions: nodemailer.SendMailOptions = {
         from: `${process.env.SMTP_FROM_NAME} <${process.env.SMTP_FROM}>`,
+        replyTo: 'contactsac@hph.com.co',
         to: body.to_email,
         subject: body.subject,
         text: body.content,
